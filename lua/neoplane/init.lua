@@ -1,9 +1,14 @@
 local M = {}
 
-local config_ = require("neoplane.config")
-
 function M.setup(config)
-	config_ = vim.tbl_deep_extend("force", config_, config or {})
+	local current = require("neoplane.config")
+	local merged = vim.tbl_deep_extend("force", current, config or {})
+	for k in pairs(current) do
+		current[k] = nil
+	end
+	for k, v in pairs(merged) do
+		current[k] = v
+	end
 end
 
 return M

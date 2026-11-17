@@ -14,7 +14,14 @@ local vars = {
 			return path_utils.home_relative(folder)
 		end
 		local project_dir = artifact_cwd.resolve(path) or vim.fs.root(path, ".git")
-		return path_utils.home_relative(artifact_cwd.for_checkout(assert(project_dir, "Artifact project not found")))
+		if project_dir then
+			return path_utils.home_relative(artifact_cwd.for_checkout(project_dir))
+		end
+		local latest = assert(
+			artifact_cwd.latest_in(require("neoplane.config").dirs.artifacts),
+			"Artifact project not found and no artifact file is open"
+		)
+		return path_utils.home_relative(vim.fs.dirname(latest.path))
 	end,
 	column = function(ctx)
 		return ctx.col
